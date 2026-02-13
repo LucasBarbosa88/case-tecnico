@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import './index.css';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -11,7 +13,7 @@ import Environments from './pages/Environments';
 import AccessControl from './pages/AccessControl';
 import History from './pages/History';
 
-const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
+const RequireAuth: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
@@ -27,7 +29,7 @@ const RequireAuth: React.FC<{ children: JSX.Element }> = ({ children }) => {
   return children;
 };
 
-const RoleGuard: React.FC<{ children: JSX.Element; allowedRoles: string[] }> = ({ children, allowedRoles }) => {
+const RoleGuard: React.FC<{ children: React.ReactElement; allowedRoles: string[] }> = ({ children, allowedRoles }) => {
   const { user, isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) return null;
@@ -83,8 +85,11 @@ const App: React.FC = () => {
   );
 };
 
+import { Toaster } from 'sonner';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
+    <Toaster position="top-right" richColors />
     <App />
   </React.StrictMode>
 );

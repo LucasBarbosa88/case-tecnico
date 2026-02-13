@@ -12,6 +12,8 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+import { toast } from 'sonner';
+
 api.interceptors.response.use(
   (response) => {
     if (response.data && response.data.success === true && response.data.data !== undefined) {
@@ -20,6 +22,19 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    const message = error.response?.data?.message || 'Ocorreu um erro inesperado';
+
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      toast.error('Sessão expirada. Por favor, faça login novamente.');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
+    } else {
+      toast.error(message);
+    }
+
     return Promise.reject(error);
   }
 );

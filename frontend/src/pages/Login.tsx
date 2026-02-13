@@ -39,60 +39,86 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--background)] p-4">
-      <div className="card w-full max-w-md bg-[var(--surface)] fade-in">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-[var(--primary)] rounded-xl flex items-center justify-center text-white mx-auto mb-4 text-2xl font-bold">
-            SM
-          </div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Bem-vindo de volta</h1>
-          <p className="text-[var(--text-secondary)] mt-2">Faça login para acessar o sistema</p>
-        </div>
+    <div className="min-h-screen d-flex align-items-center justify-content-center py-5"
+      style={{
+        backgroundColor: 'var(--primary-dark)',
+        backgroundImage: 'radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(79, 70, 229, 0.1) 0%, transparent 40%)'
+      }}>
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-8 col-lg-5 col-xl-4">
+            <div className="card border-0 shadow-lg rounded-4 overflow-hidden fade-in">
+              <div className="card-body p-5">
+                <div className="text-center mb-5">
+                  <div className="bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center rounded-4 mb-4"
+                    style={{ width: 64, height: 64 }}>
+                    <div className="bg-primary text-white rounded-3 shadow-sm d-flex align-items-center justify-content-center fw-black"
+                      style={{ width: 44, height: 44, fontSize: '1.25rem' }}>
+                      SM
+                    </div>
+                  </div>
+                  <h2 className="fw-black text-dark mb-2">Seja bem-vindo</h2>
+                  <p className="text-muted">Acesse o portal do SpaceManager</p>
+                </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="label">Email</label>
-            <input
-              {...register('email')}
-              type="email"
-              className="w-full p-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-              placeholder="seu@email.com"
-            />
-            {errors.email && <span className="text-xs text-[var(--error)] mt-1">{errors.email.message}</span>}
-          </div>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className="mb-4">
+                    <label className="form-label small fw-bold text-uppercase text-muted" style={{ letterSpacing: '0.05em' }}>Email</label>
+                    <input
+                      {...register('email')}
+                      type="email"
+                      className={`form-control form-control-lg ${errors.email ? 'is-invalid' : 'border-light bg-light'} px-4 py-3 rounded-3 shadow-none`}
+                      placeholder="seu@email.com"
+                      style={{ fontSize: '0.95rem' }}
+                    />
+                    {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
+                  </div>
 
-          <div>
-            <label className="label">Senha</label>
-            <input
-              {...register('password')}
-              type="password"
-              className="w-full p-2 border border-[var(--border)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-              placeholder="••••••"
-            />
-            {errors.password && <span className="text-xs text-[var(--error)] mt-1">{errors.password.message}</span>}
-          </div>
+                  <div className="mb-4">
+                    <label className="form-label small fw-bold text-uppercase text-muted" style={{ letterSpacing: '0.05em' }}>Senha</label>
+                    <input
+                      {...register('password')}
+                      type="password"
+                      className={`form-control form-control-lg ${errors.password ? 'is-invalid' : 'border-light bg-light'} px-4 py-3 rounded-3 shadow-none`}
+                      placeholder="••••••"
+                      style={{ fontSize: '0.95rem' }}
+                    />
+                    {errors.password && <div className="invalid-feedback">{errors.password.message}</div>}
+                  </div>
 
-          {errors.root && (
-            <div className="bg-red-50 text-[var(--error)] text-sm p-3 rounded-lg text-center">
-              {errors.root.message}
+                  {errors.root && (
+                    <div className="alert alert-danger border-0 rounded-3 mb-4 d-flex align-items-center gap-2 small fw-bold">
+                      <LogIn size={16} />
+                      {errors.root.message}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="btn btn-primary btn-lg w-100 py-3 rounded-3 fw-black shadow-sm transition-all mt-2"
+                  >
+                    {isSubmitting ? (
+                      <div className="d-flex align-items-center justify-content-center gap-2">
+                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span>Processando...</span>
+                      </div>
+                    ) : (
+                      <div className="d-flex align-items-center justify-content-center gap-2">
+                        <LogIn size={20} />
+                        <span>Entrar na conta</span>
+                      </div>
+                    )}
+                  </button>
+                </form>
+              </div>
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-          >
-            {isSubmitting ? (
-              <span className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-            ) : (
-              <>
-                <LogIn size={18} />
-                Entrar
-              </>
-            )}
-          </button>
-        </form>
+            <div className="text-center mt-5">
+              <p className="text-white-50 small mb-0">© 2026 SpaceManager. Todos os direitos reservados.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
