@@ -15,7 +15,6 @@ export class AccessLogsService {
     const { studentId, environmentId, action } = createAccessLogDto;
 
     try {
-      // Check for active session
       const activeSession = await this.accessLogRepository.findOne({
         where: {
           userId: studentId,
