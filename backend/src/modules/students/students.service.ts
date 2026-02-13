@@ -15,6 +15,26 @@ export class StudentsService {
 
   async create(createStudentDto: CreateStudentDto) {
     try {
+      // Verificar se existe um estudante deletado logicamente com o mesmo email ou matrícula
+      const existingDeleted = await this.userRepository.findOne({
+        where: [
+          { email: createStudentDto.email },
+          { registration: createStudentDto.registration },
+        ],
+        withDeleted: true,
+      });
+
+      if (existingDeleted && existingDeleted.deletedAt) {
+        // Restaurar e atualizar o estudante existente
+        existingDeleted.deletedAt = null as any;
+        const hashedPassword = await bcrypt.hash(createStudentDto.password, 10);
+        this.userRepository.merge(existingDeleted, {
+          ...createStudentDto,
+          password: hashedPassword,
+        });
+        return await this.userRepository.save(existingDeleted);
+      }
+
       const hashedPassword = await bcrypt.hash(createStudentDto.password, 10);
       const student = this.userRepository.create({
         ...createStudentDto,
@@ -24,9 +44,9 @@ export class StudentsService {
       return await this.userRepository.save(student);
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('Já existe um aluno com este email ou matrícula.');
+        throw new ConflictException('Email ou matrícula já cadastrados em um aluno ativo.');
       }
-      throw new InternalServerErrorException('Erro ao criar aluno: ' + error.message);
+      throw new InternalServerErrorException('Erro ao criar aluno');
     }
   }
 
@@ -79,7 +99,7 @@ export class StudentsService {
     try {
       const student = await this.userRepository.findOne({ where: { id } });
       if (!student) throw new NotFoundException('Estudante não encontrado');
-      return await this.userRepository.remove(student);
+      return await this.userRepository.softRemove(student);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Erro ao remover aluno');

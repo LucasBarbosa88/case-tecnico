@@ -57,19 +57,20 @@ export class AccessLogsService {
 
   async findAll(userId: string, role: string) {
     try {
-      const where: any = {};
+      const query = this.accessLogRepository.createQueryBuilder('log')
+        .leftJoinAndSelect('log.user', 'user')
+        .leftJoinAndSelect('log.environment', 'environment')
+        .withDeleted()
+        .orderBy('log.checkIn', 'DESC');
 
-      // If student, filter only their own logs
       if (role === 'student') {
-        where.userId = userId;
+        query.where('log.userId = :userId', { userId });
       }
 
-      return await this.accessLogRepository.find({
-        where,
-        order: { checkIn: 'DESC' },
-        relations: ['user', 'environment'],
-      });
+      const logs = await query.getMany();
+      return logs;
     } catch (error) {
+      console.error('Error in AccessLogsService.findAll:', error);
       throw new InternalServerErrorException('Erro ao listar registros de acesso');
     }
   }

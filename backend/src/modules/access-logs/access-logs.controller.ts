@@ -20,6 +20,6 @@ export class AccessLogsController {
   @Get()
   @ApiOperation({ summary: 'Listar histórico de acessos' })
   findAll(@Req() req: any) {
-    return this.accessLogsService.findAll(req.user.sub, req.user.role);
+    return this.accessLogsService.findAll(req.user.id, req.user.role);
   }
 }

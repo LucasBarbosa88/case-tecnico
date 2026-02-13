@@ -14,11 +14,24 @@ export class EnvironmentsService {
 
   async create(createEnvironmentDto: CreateEnvironmentDto) {
     try {
+      // Verificar se existe um ambiente deletado logicamente com o mesmo nome
+      const existingDeleted = await this.environmentRepository.findOne({
+        where: { name: createEnvironmentDto.name },
+        withDeleted: true,
+      });
+
+      if (existingDeleted && existingDeleted.deletedAt) {
+        // Restaurar e atualizar o ambiente existente
+        existingDeleted.deletedAt = null;
+        this.environmentRepository.merge(existingDeleted, createEnvironmentDto);
+        return await this.environmentRepository.save(existingDeleted);
+      }
+
       const environment = this.environmentRepository.create(createEnvironmentDto);
       return await this.environmentRepository.save(environment);
     } catch (error) {
       if (error.code === '23505') {
-        throw new ConflictException('Já existe um ambiente com este nome.');
+        throw new ConflictException('Já existe um ambiente ativo com este nome.');
       }
       throw new InternalServerErrorException('Erro ao criar ambiente');
     }
@@ -60,7 +73,7 @@ export class EnvironmentsService {
   async remove(id: string) {
     try {
       const environment = await this.findOne(id);
-      return await this.environmentRepository.remove(environment);
+      return await this.environmentRepository.softRemove(environment);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Erro ao remover ambiente');
