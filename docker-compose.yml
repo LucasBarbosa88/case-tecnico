@@ -29,7 +29,9 @@ services:
     container_name: space_management_backend
     restart: unless-stopped
     env_file:
-      - ./backend/.env
+      - ./backend/.env.example
+      - path: ./backend/.env
+        required: false
     ports:
       - "3000:3000"
     volumes:
