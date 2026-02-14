@@ -14,14 +14,14 @@ export class AccessLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @Column()
   userId: string;
 
-  @ManyToOne(() => Environment, (env) => env.accessLogs, { eager: true })
+  @ManyToOne(() => Environment, (env) => env.accessLogs)
   @JoinColumn({ name: 'environmentId' })
   environment: Environment;
 

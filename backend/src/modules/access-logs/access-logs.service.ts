@@ -14,13 +14,14 @@ export class AccessLogsService {
   async registerAccess(createAccessLogDto: CreateAccessLogDto) {
     const { studentId, environmentId, action } = createAccessLogDto;
 
-    try {
-      const activeSession = await this.accessLogRepository.findOne({
+    return await this.accessLogRepository.manager.transaction(async (transactionalEntityManager) => {
+      const activeSession = await transactionalEntityManager.findOne(AccessLog, {
         where: {
           userId: studentId,
           checkOut: IsNull(),
         },
         order: { checkIn: 'DESC' },
+        lock: { mode: 'pessimistic_write' },
       });
 
       if (action === AccessAction.CHECK_IN) {
@@ -28,12 +29,12 @@ export class AccessLogsService {
           throw new BadRequestException('Aluno já possui um check-in ativo em outro ambiente.');
         }
 
-        const log = this.accessLogRepository.create({
+        const log = transactionalEntityManager.create(AccessLog, {
           userId: studentId,
           environmentId: environmentId,
           checkIn: new Date(),
         });
-        return await this.accessLogRepository.save(log);
+        return await transactionalEntityManager.save(log);
       }
 
       if (action === AccessAction.CHECK_OUT) {
@@ -46,12 +47,12 @@ export class AccessLogsService {
         }
 
         activeSession.checkOut = new Date();
-        return await this.accessLogRepository.save(activeSession);
+        return await transactionalEntityManager.save(activeSession);
       }
-    } catch (error) {
+    }).catch(error => {
       if (error instanceof BadRequestException) throw error;
       throw new InternalServerErrorException('Erro ao registrar acesso: ' + error.message);
-    }
+    });
   }
 
   async findAll(userId: string, role: string) {

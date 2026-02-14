@@ -14,17 +14,6 @@ export class EnvironmentsService {
 
   async create(createEnvironmentDto: CreateEnvironmentDto) {
     try {
-      const existingDeleted = await this.environmentRepository.findOne({
-        where: { name: createEnvironmentDto.name },
-        withDeleted: true,
-      });
-
-      if (existingDeleted && existingDeleted.deletedAt) {
-        existingDeleted.deletedAt = null as any;
-        this.environmentRepository.merge(existingDeleted, createEnvironmentDto);
-        return await this.environmentRepository.save(existingDeleted);
-      }
-
       const environment = this.environmentRepository.create(createEnvironmentDto);
       return await this.environmentRepository.save(environment);
     } catch (error) {
@@ -57,27 +46,10 @@ export class EnvironmentsService {
   async update(id: string, updateEnvironmentDto: UpdateEnvironmentDto) {
     try {
       const environment = await this.findOne(id);
-
-      if (updateEnvironmentDto.name && updateEnvironmentDto.name !== environment.name) {
-        const conflicting = await this.environmentRepository.findOne({
-          where: { name: updateEnvironmentDto.name },
-          withDeleted: true,
-        });
-
-        if (conflicting && conflicting.id !== id) {
-          if (conflicting.deletedAt) {
-            conflicting.name = `${conflicting.name}-deletado-${Date.now()}`;
-            await this.environmentRepository.save(conflicting);
-          } else {
-            throw new ConflictException('Já existe um ambiente ativo com este nome.');
-          }
-        }
-      }
-
       this.environmentRepository.merge(environment, updateEnvironmentDto);
       return await this.environmentRepository.save(environment);
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ConflictException) throw error;
+      if (error instanceof NotFoundException) throw error;
       if (error.code === '23505') {
         throw new ConflictException('Já existe um ambiente ativo com este nome.');
       }

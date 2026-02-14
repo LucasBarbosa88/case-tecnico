@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { AccessLog } from './access-log.entity';
 
@@ -16,11 +17,12 @@ export enum EnvironmentType {
 }
 
 @Entity('environments')
+@Index(['name'], { unique: true, where: '"deletedAt" IS NULL' })
 export class Environment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 255, unique: true })
+  @Column({ length: 255 })
   name: string;
 
   @Column({ type: 'enum', enum: EnvironmentType })
