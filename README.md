@@ -1,5 +1,42 @@
 # **Case Técnico – Processo Seletivo**
 
+Este projeto é uma solução para o controle de ocupação de espaços de ensino, desenvolvida com **NestJS**, **React**, **PostgreSQL** e **Docker**.
+
+---
+
+## **Como Executar o Projeto**
+
+O projeto foi configurado para iniciar rapidamente após o clone, sem necessidade de configurações manuais.
+
+### **Pré-requisitos**
+*   **Docker** e **Docker Compose** instalados.
+
+### **Passos para execução**
+1.  **Clone o repositório**:
+    ```bash
+    git clone https://github.com/LucasBarbosa88/case-tecnico.git
+    cd case-tecnico
+    ```
+2.  **Inicie os containers**:
+    ```bash
+    docker-compose up -d --build
+    ```
+3.  **Acesse as aplicações**:
+    *   **Frontend**: [http://localhost:5173](http://localhost:5173)
+    *   **Backend (API)**: [http://localhost:3000/api](http://localhost:3000/api)
+    *   **Swagger (Documentação da API)**: [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+
+---
+
+## 🔐 **Credenciais de Acesso (Login Inicial)**
+
+O sistema cria um usuário administrador inicial no primeiro boot para fins de teste:
+
+*   **E-mail**: `admin@admin.com`
+*   **Senha**: `admin123`
+
+---
+
 ## **Problema**
 
 Desenvolver uma aplicação web para **controlar o uso de espaços de ensino**, permitindo análise da taxa de ocupação.  
