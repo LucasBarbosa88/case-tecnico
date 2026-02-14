@@ -28,15 +28,8 @@ services:
       target: development
     container_name: space_management_backend
     restart: unless-stopped
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_DATABASE: space_management
-      JWT_SECRET: super-secret-jwt-key-change-in-production
-      JWT_EXPIRATION: 1d
-      PORT: 3000
+    env_file:
+      - ./backend/.env
     ports:
       - "3000:3000"
     volumes:
