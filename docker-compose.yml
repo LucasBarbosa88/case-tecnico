@@ -28,10 +28,16 @@ services:
       target: development
     container_name: space_management_backend
     restart: unless-stopped
-    env_file:
-      - ./backend/.env.example
-      - path: ./backend/.env
-        required: false
+    environment:
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_DATABASE: ${DB_DATABASE:-space_management}
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-dev-only}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-1d}
+      PORT: ${PORT:-3000}
+      NODE_ENV: ${NODE_ENV:-development}
     ports:
       - "3000:3000"
     volumes:
