@@ -28,7 +28,7 @@ O projeto foi configurado para iniciar rapidamente após o clone, sem necessidad
 
 ---
 
-## 🔐 **Credenciais de Acesso (Login Inicial)**
+## **Credenciais de Acesso (Login Inicial)**
 
 O sistema cria um usuário administrador inicial no primeiro boot para fins de teste:
 
